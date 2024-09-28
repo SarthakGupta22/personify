@@ -23,7 +23,6 @@ def test_valid_audio_features():
         "valence": 0.9
     }
 
-    # Test with valid data (should not raise an exception)
     features = AudioFeatures(**valid_data)
     assert features.danceability == 0.8
 
@@ -31,7 +30,7 @@ def test_invalid_danceability():
     invalid_data = {
         "acousticness": 0.5,
         "analysis_url": "https://api.spotify.com/v1/audio-analysis/track_id",
-        "danceability": 1.5,  # Invalid value
+        "danceability": 1.5,  # INVALID
         "duration_ms": 210000,
         "energy": 0.7,
         "id": "track_id",
@@ -49,7 +48,6 @@ def test_invalid_danceability():
         "valence": 0.9
     }
 
-    # Test with invalid danceability value (should raise a ValueError)
     with pytest.raises(ValueError, match="Value 1.5 must be between 0.0 and 1.0"):
         AudioFeatures(**invalid_data)
 
@@ -62,7 +60,7 @@ def test_invalid_key():
         "energy": 0.7,
         "id": "track_id",
         "instrumentalness": 0.0,
-        "key": 12,  # Invalid key
+        "key": 12, # INVALID
         "liveness": 0.3,
         "loudness": -5.2,
         "mode": 1,
@@ -75,7 +73,6 @@ def test_invalid_key():
         "valence": 0.9
     }
 
-    # Test with invalid key value (should raise a ValueError)
     with pytest.raises(ValueError, match="Key 12 must be between -1 and 11"):
         AudioFeatures(**invalid_data)
 
@@ -96,11 +93,10 @@ def test_invalid_type():
         "tempo": 120.0,
         "time_signature": 4,
         "track_href": "https://api.spotify.com/v1/tracks/track_id",
-        "type": "invalid_type",  # Invalid type
+        "type": "invalid_type", # INVALID
         "uri": "spotify:track:track_id",
         "valence": 0.9
     }
 
-    # Test with invalid type value (should raise a ValueError)
     with pytest.raises(ValueError, match='Type invalid_type must be "audio_features"'):
         AudioFeatures(**invalid_data)
