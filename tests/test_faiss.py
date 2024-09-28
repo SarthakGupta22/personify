@@ -64,3 +64,17 @@ def test_assertions():
     # Test for AssertionError on shape mismatch
     with pytest.raises(AssertionError):
         topk_similar(np.random.rand(5).astype(np.float32), data_matrix, top_k=3, metric='l2')
+
+def test_faiss_topk_similar_expected_result():
+    data_matrix = np.array([
+        [0.0, 1.0],
+        [1.0, 0.0],
+        [0.5, 0.5]
+    ], dtype=np.float32)
+    
+    query_vector = np.array([1.0, 0.0], dtype=np.float32)
+    top_k_indices = topk_similar(query_vector, data_matrix, top_k=1, metric='l2')
+    
+    assert len(top_k_indices) == 1, f"Expected 1 result, but got {len(top_k_indices)}"
+    assert top_k_indices[0] == 1, f"Expected index 1, but got {top_k_indices[0]}"
+    assert top_k_indices != 2, "Expected index 1, but got 2"
