@@ -1,9 +1,11 @@
 name: personify
 channels:
   - conda-forge
+  - pytorch
 dependencies:
-  - python=3.12
+  - python=3.10
   - requests
   - aiohttp
   - pytest
   - pydantic
+  - faiss-cpu
