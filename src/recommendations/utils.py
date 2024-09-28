@@ -9,7 +9,7 @@ def topk_similar(query_vector: np.ndarray, data_matrix: np.ndarray, top_k: int =
     - query_vector (np.ndarray): 1D numpy array of shape (n,) representing the query vector (must be float32).
     - data_matrix (np.ndarray): 2D numpy array of shape (K, n) where K is the number of vectors and n is the vector dimensions (must be float32).
     - top_k (int): The number of top similar vectors to return (default: 5).
-    - metric (str): Similarity metric to use ('l2', 'cosine', or 'inner_product', default is 'l2').
+    - metric (str): Similarity metric to use ('l2', 'cosine' default is 'l2').
 
     Returns:
     - list: Indices of the top_k most similar vectors in the data matrix.
@@ -37,14 +37,11 @@ def topk_similar(query_vector: np.ndarray, data_matrix: np.ndarray, top_k: int =
     assert query_vector.shape[0] == data_matrix.shape[1], \
         "query_vector dimensions must match the second dimension of data_matrix"
     
-    # Choose the FAISS index type based on the metric
     if metric == 'l2':
         index = faiss.IndexFlatL2(data_matrix.shape[1])
     elif metric == 'cosine':
         faiss.normalize_L2(data_matrix)
-        faiss.normalize_L2(query_vector.reshape(1, -1))  # Reshape query to 2D to normalize
-        index = faiss.IndexFlatIP(data_matrix.shape[1])  # Inner product for cosine similarity
-    elif metric == 'inner_product':
+        faiss.normalize_L2(query_vector.reshape(1, -1))
         index = faiss.IndexFlatIP(data_matrix.shape[1])
     else:
         raise ValueError("Invalid metric! Use 'l2', 'cosine', or 'inner_product'.")
