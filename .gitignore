@@ -39,3 +39,6 @@ venv.bak/
 
 # VSCode
 .vscode/
+shrivats_dump/requests.ipynb
+shrivats_dump/spotify_credentials.env
+shrivats_dump/
