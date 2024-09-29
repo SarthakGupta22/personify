@@ -66,7 +66,5 @@ def test_faiss_recommender_expected_result():
     recommender = FaissRecommender(data_corpus=data_matrix, metric='l2')
     top_k_indices = recommender.recommend(query_vector, top_k=1)
 
-    print("Top K Indices: ", top_k_indices)
-    
     assert len(top_k_indices) == 1, f"Expected 1 result, but got {len(top_k_indices)}"
     assert top_k_indices[0] == 1, f"Expected index 1, but got {top_k_indices[0]}"
