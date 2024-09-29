@@ -1,5 +1,5 @@
 import pytest
-from src.api.types import AudioFeatures
+from src.api.responset_types import AudioFeatures
 
 def test_valid_audio_features():
     valid_data = {
