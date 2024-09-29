@@ -42,3 +42,4 @@ venv.bak/
 shrivats_dump/requests.ipynb
 shrivats_dump/spotify_credentials.env
 shrivats_dump/
+shrivats_explore/faiss.ipynb

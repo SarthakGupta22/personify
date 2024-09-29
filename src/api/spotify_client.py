@@ -3,7 +3,6 @@ import requests
 from base64 import b64encode
 from typing import Any
 from datetime import datetime, timedelta
-from response_types import AudioFeatures
 from pprint import pprint
 
 class SpotifyClient:
@@ -15,7 +14,7 @@ class SpotifyClient:
         # Ensure that Client ID and Client Secret are set, raise an error if not
         if not self.client_id or not self.client_secret:
             raise ValueError(
-                "Please set the environment variables 'SPOTIPY_CLIENT_ID' and 'SPOTIPY_CLIENT_SECRET'"
+                "Please set the environment variables 'SPOTIFY_CLIENT_ID' and 'SPOTIFY_CLIENT_SECRET'"
             )
 
         # Access token will be stored after it's fetched
@@ -29,6 +28,7 @@ class SpotifyClient:
         """
 
         # If the access token exists and is still valid (within 1 hour), return it
+        
         if self.access_token and self.token_created_at:
             time_since_creation = datetime.now() - self.token_created_at
             if time_since_creation < timedelta(hours=1):
@@ -71,6 +71,7 @@ class SpotifyClient:
 
         # Store access token in the class and return it
         self.access_token = access_token
+        self.token_created_at = datetime.now()
         return access_token
     
 
@@ -106,8 +107,8 @@ class SpotifyClient:
         pass
 
 
-if __name__ == "__main__":
-    # Example Usage
-    spotify_client = SpotifyClient()
-    song_track_id = "4uLU6hMCjMI75M1A2tKUQC"
-    pprint(AudioFeatures(**spotify_client.get_song_features(song_track_id)).model_dump())
+# if __name__ == "__main__":
+#     # Example Usage
+#     spotify_client = SpotifyClient()
+#     song_track_id = "4uLU6hMCjMI75M1A2tKUQC"
+#     pprint(AudioFeatures(**spotify_client.get_song_features(song_track_id)).model_dump())
