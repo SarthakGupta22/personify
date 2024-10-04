@@ -4,7 +4,8 @@ import sys
 from base64 import b64encode
 from typing import Any
 from datetime import datetime, timedelta
-from src.api.response_types import AudioFeatures
+from pprint import pprint
+from src.api.response_types import AudioFeatures, AudioFeaturesResponse
 from src.parser.parse_get_playlists_response_into_song_ids import parse_playlists_response_into_data
 
 class SpotifyClient:
@@ -30,7 +31,6 @@ class SpotifyClient:
         """
 
         # If the access token exists and is still valid (within 1 hour), return it
-        
         if self.access_token and self.token_created_at:
             time_since_creation = datetime.now() - self.token_created_at
             if time_since_creation < timedelta(hours=1):
@@ -130,8 +130,34 @@ class SpotifyClient:
         return audio_features
 
     
-    def get_all_song_features(self, track_ids: list[str]) -> list[dict[str, Any]]:
-        pass
+    def get_multiple_song_features(self, track_ids: list[str]) -> list[dict[str, Any]]:
+        """
+        Fetches the audio features of a multiple Spotify tracks using their track ID.
+        Returns a list of dictionary containing the track's audio features.
+        """
+        
+        # Fetch the access token (if it's not available, make the request to get it)
+        access_token = self.get_access_token()
+
+        # Ensure that an access token was successfully retrieved
+        if not access_token:
+            raise ValueError("Access token could not be retrieved.")
+        
+        track_ids = "%".join(track_ids) 
+
+        # Define the endpoint for getting audio features for the specific track
+        url = f"https://api.spotify.com/v1/audio-features?ids={track_ids}"
+
+        # Set up headers with the authorization token
+        headers = {"Authorization": f"Bearer {access_token}"}
+
+        # Send GET request to the Spotify API
+        response= requests.get(url, headers=headers)
+
+        # Parse and return the JSON response containing the audio features
+        audio_features = response.json()
+
+        return audio_features
 
 # Run function
 # python3 src/api/spotify_client.py 3cEYpjA9oz9GiPac4AsH4n
@@ -152,6 +178,7 @@ if __name__ == "__main__":
     song_ids_list = parse_playlists_response_into_data(song_ids_response)
     print("Parsed Song IDs:", song_ids_list)
 
-    # # Get the audio features for a specific song
-    # pprint(spotify_client.get_song_features(song_track_id))
-    # pprint(AudioFeatures(**spotify_client.get_song_features(song_track_id)).model_dump())
+    # Feature extractor
+    pprint(AudioFeatures(**spotify_client.get_song_features(song_track_ids_list[0])).model_dump())
+    pprint(AudioFeaturesResponse(**spotify_client.get_multiple_song_features(song_ids_list)).model_dump())
+
