@@ -10,3 +10,8 @@ A spotify recommender system
     conda env create -f environment.yml
     conda activate personify
     ```
+
+## Execution
+
+`python3 src/api/spotify_client.py {playlistId}`
+Example: `python3 src/api/spotify_client.py 3cEYpjA9oz9GiPac4AsH4n`
