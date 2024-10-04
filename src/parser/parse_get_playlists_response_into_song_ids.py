@@ -31,10 +31,29 @@ def get_track_ids(file_path):
         print(f"Error reading or parsing file: {e}")
         return []
 
+def parse_playlists_response_into_data(parsed_data):
+    """
+    Reads json data from API and extracts the track IDs.
+
+    Parameters:
+    data: jsondata
+
+    Returns:
+    list: A list of track IDs.
+    """
+    try:
+        # Extract track IDs into a list
+        track_ids = [item['track']['id'] for item in parsed_data['tracks']['items']]
+        
+        return track_ids
+    except (FileNotFoundError, json.JSONDecodeError) as e:
+        print(f"Error reading or parsing file: {e}")
+        return []
+
 # Example usage
-file_path = 'sample_data/get_playlist_response.json'
-track_ids = get_track_ids(file_path)
-print(track_ids)
+# file_path = 'sample_data/get_playlist_response.json'
+# track_ids = get_track_ids(file_path)
+# print(track_ids)
 
 ### Sample response
-['2oENJa1T33GJ0w8dC167G4', '2gpWyfu7eZ01zzncHpxOtA', '0k1WUmIRnG3xU6fvvDVfRG']
+# ['2oENJa1T33GJ0w8dC167G4', '2gpWyfu7eZ01zzncHpxOtA', '0k1WUmIRnG3xU6fvvDVfRG']
