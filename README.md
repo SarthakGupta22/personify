@@ -14,4 +14,5 @@ A spotify recommender system
 ## Execution
 
 `python3 src/api/spotify_client.py {playlistId}`
+
 Example: `python3 src/api/spotify_client.py 3cEYpjA9oz9GiPac4AsH4n`
