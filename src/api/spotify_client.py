@@ -1,10 +1,12 @@
 import os
 import requests
+import sys
 from base64 import b64encode
 from typing import Any
 from datetime import datetime, timedelta
-from src.api.response_types import AudioFeatures, AudioFeaturesResponse
 from pprint import pprint
+from src.api.response_types import AudioFeatures, AudioFeaturesResponse
+from src.parser.parse_get_playlists_response_into_song_ids import parse_playlists_response_into_data
 
 class SpotifyClient:
     def __init__(self):
@@ -73,7 +75,32 @@ class SpotifyClient:
         self.access_token = access_token
         self.token_created_at = datetime.now()
         return access_token
-    
+
+    def get_song_ids(self, query: str) -> dict[str, Any]:
+        """
+        Fetches the Spotify track IDs for a given query using the Spotify Search API.
+        Returns a dictionary containing the track IDs.
+        """
+
+        # Fetch the access token (if it's not available, make the request to get it)
+        access_token = self.get_access_token()
+
+        # Ensure that an access token was successfully retrieved
+        if not access_token:
+            raise ValueError("Access token could not be retrieved.")
+
+        # Define the endpoint for searching tracks on Spotify
+        url = f"https://api.spotify.com/v1/playlists/{playlist_id}?fields=tracks%28items%28track%28id%29%29%29"
+
+        # Set up headers with the authorization token
+        headers = {"Authorization": f"Bearer {access_token}"}
+
+        # Send GET request to the Spotify API
+        response = requests.get(url, headers=headers)
+
+        # Parse and return the JSON response containing the track IDs
+        track_ids = response.json()
+        return track_ids
 
     def get_song_features(self, track_id: str) -> dict[str, Any]:
         """
@@ -132,12 +159,26 @@ class SpotifyClient:
 
         return audio_features
 
-
+# Run function
+# python3 src/api/spotify_client.py 3cEYpjA9oz9GiPac4AsH4n
 if __name__ == "__main__":
-    # Example Usage
+    # Check if a playlist ID is passed via command line
+    if len(sys.argv) > 1:
+        playlist_id = sys.argv[1]
+    else:
+        # Default playlist ID if none is passed
+        playlist_id = "3cEYpjA9oz9GiPac4AsH4n"
+
     spotify_client = SpotifyClient()
-    song_track_id = "4uLU6hMCjMI75M1A2tKUQC"
-    pprint(AudioFeatures(**spotify_client.get_song_features(song_track_id)).model_dump())
-    song_track_ids = ["7ouMYWpwJ422jRcDASZB7P", "2C4VqPOruhp5EdPBeR92t6lQ", "2C2takcwOaAZWiXQijPHIx7B"]
-    print()
-    pprint(AudioFeaturesResponse(**spotify_client.get_multiple_song_features(song_track_ids)).model_dump())
+
+    song_ids_response = spotify_client.get_song_ids(playlist_id)
+    print("Spotify GetPlaylist Response:", song_ids_response)
+
+    # parser
+    song_ids_list = parse_playlists_response_into_data(song_ids_response)
+    print("Parsed Song IDs:", song_ids_list)
+
+    # Feature extractor
+    pprint(AudioFeatures(**spotify_client.get_song_features(song_track_ids_list[0])).model_dump())
+    pprint(AudioFeaturesResponse(**spotify_client.get_multiple_song_features(song_ids_list)).model_dump())
+
